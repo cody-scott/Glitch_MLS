@@ -2,7 +2,9 @@
 
 Get a service account token and grant that account access to your sheet
 
-save the contents of the service token in a file api_credentials.json
+save the contents of the service token in a file 
+
+    .data/api_credentials.json
 
 add these to .env
 
