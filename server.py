@@ -10,11 +10,15 @@ app = Flask(__name__)
 import json
 import processing
 
-@app.route("/")
+@app.route("/", methods = ['POST', 'GET'])
 def hello():
+    if request.method == 'GET':
+        return "Hello world!"
+    req = request
+
     env = os.environ
     headers = request.headers
-    sk = headers.environ.get("HTTP_SECRET_KEY")
+    sk = request.json['secret_key']
     if sk != os.getenv("secret_key"):
         return "Hello world!"
 
