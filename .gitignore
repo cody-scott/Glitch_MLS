@@ -1,3 +1,4 @@
 .env
-api_credentials.json
+.data/api_credentials.json
 .idea/*
+.data/*

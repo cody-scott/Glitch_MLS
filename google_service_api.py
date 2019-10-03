@@ -2,7 +2,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 scopes = ['https://www.googleapis.com/auth/spreadsheets']
-service_account_file = 'api_credentials.json'
+service_account_file = '.data/api_credentials.json'
 
 def get_service():
     credentials = service_account.Credentials.from_service_account_file(
