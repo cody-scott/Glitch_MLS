@@ -40,7 +40,9 @@ def request_data(current_page=1):
 
 def get_listings():
     response = request_data()
-    data = json.loads(response.content)
+
+    print(response.content.decode("utf-8"))
+    data = json.loads(response.content.decode("utf-8"))
     if response.status_code != 200:
         print("ERROR in request")
         print(data)
@@ -54,10 +56,10 @@ def get_listings():
     if total_pages > 1:
         for i in range(current_page + 1, total_pages + 1):
             response = request_data(current_page=i)
-            data = json.loads(response.content)
+            data = json.loads(response.content.decode("utf-8"))
             if response.status_code != 200:
                 print("ERROR")
-                print(response.content)
+                print(data)
             out_data.extend(data['Results'])
 
     return out_data
@@ -112,7 +114,6 @@ def load_old_data(service):
 
 
 def generate_new_frames(new_listings, old_listings):
-    pass
     old_listings.loc[
         old_listings["Id"].isin(new_listings["Id"]), "Active"] = True
     old_listings.loc[
@@ -125,10 +126,10 @@ def generate_new_frames(new_listings, old_listings):
         ~new_listings["Id"].isin(old_id_active['Id'])]
 
     # new full list (second tab)
-    new_full_list = pd.concat([old_listings, new_freehold])
+    new_full_list = pd.concat([old_listings, new_freehold], sort=False)
 
     # new active listings
-    active_listings = pd.concat([old_id_active, new_freehold], axis=0)
+    active_listings = pd.concat([old_id_active, new_freehold], axis=0, sort=False)
     active_listings = active_listings.drop_duplicates('Id', keep='last')
     active_listings = active_listings.drop(columns=["Active"])
 
