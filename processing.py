@@ -30,18 +30,17 @@ def load_query_data():
     return data
 
 
-def request_data(current_page=1):
-    _q_data = load_query_data()
-    query_string = get_query_string(_q_data)
+def request_data(_query_parameters, current_page=1):
+    query_string = get_query_string(_query_parameters)
     query_string = "{}&CurrentPage={}".format(query_string, current_page)
     response = requests.post(base_url, data=query_string)
     return response
 
 
-def get_listings():
-    response = request_data()
+def get_listings(query_parameters):
+    response = request_data(query_parameters)
 
-    print(response.content.decode("utf-8"))
+    # print(response.content.decode("utf-8"))
     data = json.loads(response.content.decode("utf-8"))
     if response.status_code != 200:
         print("ERROR in request")
@@ -55,7 +54,7 @@ def get_listings():
 
     if total_pages > 1:
         for i in range(current_page + 1, total_pages + 1):
-            response = request_data(current_page=i)
+            response = request_data(query_parameters, current_page=i)
             data = json.loads(response.content.decode("utf-8"))
             if response.status_code != 200:
                 print("ERROR")
@@ -177,10 +176,15 @@ def clear_active_sheet(service):
 
 # endregion
 def process(service):
-    clear_active_sheet(service)
+    # clear_active_sheet(service)
 
     logging.info("Getting listings")
-    new_listings = get_listings()
+
+    query_parameters = load_query_data()
+    new_listings = []
+    for param in query_parameters:
+        new_listings += get_listings(param)
+
     logging.info("{} listings found".format(len(new_listings)))
     logging.info("Getting freehold")
     freehold_listings = get_freehold_listings(new_listings)
