@@ -11,12 +11,15 @@ complete_sheet_name = os.getenv('complete_sheet_name')
 active_sheet_name = os.getenv('active_sheet_name')
 
 
-def load_local_test():
-    df = pd.read_excel('MLS Listings.xlsx', 'Complete')
+def load_local_test(sheet_name):
+    df = pd.read_excel('MLS Listings.xlsx', sheet_name)
     return df
 
 
-def load_sheet_data(service):
+def load_sheet_data(service, sheet_range=None):
+    if sheet_range is None:
+        sheet_range = active_sheet_name
+
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=spreadsheet_id,
                                 range=active_sheet_name).execute()
@@ -42,8 +45,10 @@ def update_dataframe(data_frame):
     return data_frame
 
 
-def _create_geojson(data_frame):
-    fld = ['Address', 'Price', 'Price Category', 'GoogleLink', 'URL']
+def _create_geojson(data_frame, fld=None):
+    if fld is None:
+        fld = ['Address', 'Price', 'Price Category', 'GoogleLink', 'URL']
+
     geom_fld = ['Latitude', 'Longitude']
     sub_data = data_frame[fld + geom_fld]
 
@@ -60,11 +65,22 @@ def _create_geojson(data_frame):
     return feature_collection
 
 
+def get_unique_lat_long():
+    # service = google_service_api.get_service()
+    # df = load_sheet_data(service, complete_sheet_name)
+
+    df = load_local_test('Complete')
+    df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
+    _geo_json = _create_geojson(df, ['Price'])
+
+    return gj_dumps(_geo_json)
+
+
 def get_mappings():
     # service = google_service_api.get_service()
-    # df = load_sheet_data(service)
+    # df = load_sheet_data(service, active_sheet_name)
 
-    df = load_local_test()
+    df = load_local_test('Active')
 
     df = update_dataframe(df)
 

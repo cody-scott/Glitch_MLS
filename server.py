@@ -47,6 +47,13 @@ def view_get_map_data():
     return mp
 
 
+@app.route('/mapData-Collected-{}'.format(os.getenv('spreadsheet_id')))
+def view_get_collected_map_data():
+    mp = mapping.get_unique_lat_long()
+    return mp
+
+
+
 @app.route('/map-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_map():
     return render_template('map.html')
