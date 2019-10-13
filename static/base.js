@@ -39,7 +39,7 @@ function load_data() {
                 ["linear"],
                 ["get", "Price"],
                 350000, 0,
-                500000, 1
+                500000, 3
             ],
             // Increase the heatmap color weight weight by zoom level
             // heatmap-intensity is a multiplier on top of heatmap-weight
@@ -68,7 +68,7 @@ function load_data() {
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                0, 0,
+                6, 0,
                 14, 50
             ],
             // Transition from heatmap to circle layer by zoom level
@@ -76,7 +76,7 @@ function load_data() {
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                13, 0.8,
+                13, 0.5,
                 15, 0,
             ],
         }
