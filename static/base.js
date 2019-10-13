@@ -18,61 +18,114 @@ function get_sheet_name() {
 
 function load_data() {
     var data_url = base_url + "/" + 'mapData-' + sheet_name;
+
+    map.addSource('listings',
+        {
+            'type': 'geojson',
+            'data': data_url
+        }
+    )
+
+    var mx_zoom = 15
     map.addLayer({
-        'id': 'listings',
+        "id": "listings-heat",
+        "type": "heatmap",
+        "source": "listings",
+        "maxzoom": 14,
+        "paint": {
+            // Increase the heatmap weight based on frequency and property magnitude
+            "heatmap-weight": [
+                "interpolate",
+                ["linear"],
+                ["get", "Price"],
+                350000, 0,
+                500000, 1
+            ],
+            // Increase the heatmap color weight weight by zoom level
+            // heatmap-intensity is a multiplier on top of heatmap-weight
+            "heatmap-intensity": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                0, 0,
+                12, 0.5
+            ],
+            // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
+            // Begin color ramp at 0-stop with a 0-transparancy color
+            // to create a blur-like effect.
+            "heatmap-color": [
+                "interpolate",
+                ["linear"],
+                ["heatmap-density"],
+                0, 'rgba(0, 104, 55, 0)',
+                0.25, 'rgba(134, 203, 102, 1)',
+                0.5, 'rgba(254, 254, 189, 1)',
+                0.75, 'rgba(248, 139, 81, 1)',
+                1, 'rgba(165, 0, 38, 1)'
+            ],
+            // Adjust the heatmap radius by zoom level
+            "heatmap-radius": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                0, 0,
+                14, 50
+            ],
+            // Transition from heatmap to circle layer by zoom level
+            "heatmap-opacity": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                13, 0.8,
+                15, 0,
+            ],
+        }
+    });
+
+
+    map.addLayer({
+        'id': 'listings-circles',
         'type': 'circle',
-        'source': {
-            type: 'geojson',
-            data: data_url
-        },
+        'source': 'listings',
+        'min_zoom': 10,
         // 'source-layer': 'sf2010',
         'paint': {
             // make circles larger as the user zooms from z12 to z22
             'circle-radius':
                 [
-                    "interpolate", ["linear"], ['get', 'Price'],
+                    "interpolate", ["linear"], ['zoom'],
                     // zoom is 5 (or less) -> circle radius will be 1px
-                    0, 10,
+                    7, 5,
                     // zoom is 10 (or greater) -> circle radius will be 5px
-                    400000, 20
+                    12, 10
                 ],
-
-            'circle-color': [
-                'to-rgba',
-                // ['at', 1, ['literal', test_data]],
+            'circle-color':
                 [
-                    'at',
-                    [
-                        "interpolate",
-                        ["linear"],
-                        ['get', 'Price'],
-                        300000, 0,
-                        500000, 255,
-                    ],
-                    ['literal', cmap_rgba_list]
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'Price'],
+                    300000, 'rgba(0, 104, 55, 1)',
+                    // 350000, 'rgba(134, 203, 102, 1)',
+                    // 400000, 'rgba(254, 254, 189, 1)',
+                    // 450000, 'rgba(248, 139, 81, 1)',
+                    500000, 'rgba(165, 0, 38, 1)'
+                ],
+            'circle-opacity': 0.8,
+            "circle-opacity": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                12, 0,
+                13, 1
                 ]
-                // 0,
-                // 0,
-            ]
 
-            // color circles by ethnicity, using a match expression
-            // https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
-            //     'circle-color': [
-            //         'match',
-            //         ['get', 'ethnicity'],
-            //         'White', '#fbb03b',
-            //         'Black', '#223b53',
-            //         'Hispanic', '#e55e5e',
-            //         'Asian', '#3bb2d0',
-            // /* other */ '#ccc'
-            //     ]
         }
     });
-    console.log(cmap_data[0]);
+    // console.log(cmap_data[0]);
     map.on('mousedown', function (e) {
-        features = map.queryRenderedFeatures(e.point, { layers: ['listings'] });
+        features = map.queryRenderedFeatures(e.point, { layers: ['listings-circles'] });
         if (features.length > 0) {
-            console.log(features[0])
+            console.log(features.length)
             console.log({
                 'price': features[0].properties.Price,
             })
@@ -87,7 +140,7 @@ function get_geojson() {
         geojson_data = _data;
     });
 }
-
+// console.log('test');
 function start_work() {
     get_sheet_name();
     load_map();

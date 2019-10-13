@@ -7,7 +7,6 @@ import os
 
 app = Flask(__name__)
 
-
 import json
 import processing
 import mapping

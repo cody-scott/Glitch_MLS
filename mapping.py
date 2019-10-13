@@ -12,7 +12,7 @@ active_sheet_name = os.getenv('active_sheet_name')
 
 
 def load_local_test():
-    df = pd.read_excel('MLS Listings.xlsx', 'Active')
+    df = pd.read_excel('MLS Listings.xlsx', 'Complete')
     return df
 
 
@@ -38,7 +38,7 @@ def update_dataframe(data_frame):
         return '{}-{}'.format((mx - base) + 1, mx)
 
     data_frame['Price Category'] = data_frame['Price'].apply(rd)
-
+    data_frame['Address'] = data_frame['Address'].apply(lambda x: str(x))
     return data_frame
 
 
