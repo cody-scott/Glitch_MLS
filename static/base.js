@@ -16,10 +16,10 @@ function get_sheet_name() {
     return _map_url
 }
 
-function load_data() {
-    var data_url = base_url + "/" + 'mapData-' + sheet_name;
 
-    map.addSource('listings',
+function load_heatmap() {
+var data_url = base_url + "/" + 'mapData-Collected-' + sheet_name;
+    map.addSource('listings-unique',
         {
             'type': 'geojson',
             'data': data_url
@@ -30,16 +30,17 @@ function load_data() {
     map.addLayer({
         "id": "listings-heat",
         "type": "heatmap",
-        "source": "listings",
-        "maxzoom": 14,
+        "source": "listings-unique",
+        // "maxzoom": 16,
         "paint": {
             // Increase the heatmap weight based on frequency and property magnitude
             "heatmap-weight": [
                 "interpolate",
                 ["linear"],
                 ["get", "Price"],
-                350000, 0,
-                500000, 3
+                300000, 0,
+				400000, 1,
+                500000, 6
             ],
             // Increase the heatmap color weight weight by zoom level
             // heatmap-intensity is a multiplier on top of heatmap-weight
@@ -69,28 +70,39 @@ function load_data() {
                 ["linear"],
                 ["zoom"],
                 6, 0,
-                14, 50
+                11, 20,
+                14, 60,
+                // 16, 100
             ],
             // Transition from heatmap to circle layer by zoom level
             "heatmap-opacity": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
+				8, 0,
+				9, 0.5,
                 13, 0.5,
-                15, 0,
+                16, 0,
             ],
         }
     });
+}
 
 
+function load_data() {
+    var data_url = base_url + "/" + 'mapData-' + sheet_name;
+
+    map.addSource('listings',
+        {
+            'type': 'geojson',
+            'data': data_url
+        }
+    )
     map.addLayer({
         'id': 'listings-circles',
         'type': 'circle',
         'source': 'listings',
-        'min_zoom': 10,
-        // 'source-layer': 'sf2010',
         'paint': {
-            // make circles larger as the user zooms from z12 to z22
             'circle-radius':
                 [
                     "interpolate", ["linear"], ['zoom'],
@@ -105,24 +117,25 @@ function load_data() {
                     ['linear'],
                     ['get', 'Price'],
                     300000, 'rgba(0, 104, 55, 1)',
-                    // 350000, 'rgba(134, 203, 102, 1)',
-                    // 400000, 'rgba(254, 254, 189, 1)',
-                    // 450000, 'rgba(248, 139, 81, 1)',
+                    350000, 'rgba(134, 203, 102, 1)',
+                    400000, 'rgba(254, 254, 189, 1)',
+                    450000, 'rgba(248, 139, 81, 1)',
                     500000, 'rgba(165, 0, 38, 1)'
                 ],
-            'circle-opacity': 0.8,
+            // 'circle-opacity': 0.8,
             "circle-opacity": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                12, 0,
-                13, 1
-                ]
+                13, 0,
+                14, 1
+                ],
+            'circle-blur': 0.5
 
         }
     });
     // console.log(cmap_data[0]);
-    map.on('mousedown', function (e) {
+    map.on('click', function (e) {
         features = map.queryRenderedFeatures(e.point, { layers: ['listings-circles'] });
         if (features.length > 0) {
             console.log(features.length)
@@ -158,9 +171,20 @@ function load_map() {
 
     map.on('load', function () {
         get_geojson();
+        load_heatmap();
         load_data();
     });
-
+    map.on('zoomend', function() {
+        console.log(map.getZoom());
+    })
 }
 
 $(document).ready(start_work)
+
+function update_heatmap(key, new_value) {
+    map.setPaintProperty('listings-heat', key, new_value);
+}
+
+function update_listing_circles(key, new_value) {
+    map.setPaintProperty('listings-circles', key, new_value);
+}

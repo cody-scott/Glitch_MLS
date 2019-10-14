@@ -35,6 +35,9 @@ def update_dataframe(data_frame):
     data_frame['Latitude'] = data_frame['Latitude'].apply(lambda x: float(x))
     data_frame['Longitude'] = data_frame['Longitude'].apply(lambda x: float(x))
 
+    data_frame['Latitude'] = data_frame['Latitude'].round(5)
+    data_frame['Longitude'] = data_frame['Longitude'].round(5)
+
     def rd(x, base=25000):
         mx = int(base * round(float(x) / base))
 
@@ -70,6 +73,7 @@ def get_unique_lat_long():
     # df = load_sheet_data(service, complete_sheet_name)
 
     df = load_local_test('Complete')
+    df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
     _geo_json = _create_geojson(df, ['Price'])
 
