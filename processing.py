@@ -60,14 +60,31 @@ def get_listings(query_parameters):
                 print("ERROR")
                 print(data)
             out_data.extend(data['Results'])
-
+    print(len(out_data))
     return out_data
 
 
 def get_freehold_listings(listings=None):
     only_list = ["Freehold"]
-    freehold_listings = [item for item in listings if
-                         item['Property']['OwnershipType'] in only_list]
+    type_list = ["Single Family"]
+    freehold_listings = []
+
+    for item in listings:
+        props = item.get('Property')
+        if props is None:
+            continue
+
+        o_type = props.get('OwnershipType')
+        t_type = props.get("Type")
+        if (o_type is None) or (t_type is None):
+            continue
+
+        if (o_type in only_list) or ((o_type is None) and (t_type in type_list)):
+            freehold_listings.append(item)
+    
+    # freehold_listings = [item for item in listings if
+    #                      item['Property']['OwnershipType'] in only_list]
+    print(len(freehold_listings))
     return freehold_listings
 
 
@@ -103,7 +120,9 @@ def listings_to_dataframe(listings):
 
 def load_old_data(service, _spreadsheet_id=None, _sheet_name=None):
     if _spreadsheet_id is not None:
-        spreadsheet_id = _spreadsheet_id
+        sheet_id = _spreadsheet_id
+    else:
+        sheet_id = spreadsheet_id
 
     if _sheet_name is not None:
         sheet_name = _sheet_name
@@ -111,7 +130,7 @@ def load_old_data(service, _spreadsheet_id=None, _sheet_name=None):
         sheet_name = complete_sheet_name
 
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,
+    result = sheet.values().get(spreadsheetId=sheet_id,
                                 range=sheet_name).execute()
     values = result.get('values', [])
 

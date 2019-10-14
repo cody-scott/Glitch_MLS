@@ -58,7 +58,7 @@ def _create_geojson(data_frame, fld=None):
     feature_list = []
     for i in sub_data.iterrows():
         _index, value = i
-        geom = Point((value['Longitude'], value['Latitude']))
+        geom = Point((float(value['Longitude']), float(value['Latitude'])))
         props = value[fld].to_dict()
         feature = Feature(geometry=geom, properties=props)
         feature_list.append(feature)
@@ -69,12 +69,15 @@ def _create_geojson(data_frame, fld=None):
 
 
 def get_unique_lat_long():
-    # service = google_service_api.get_service()
-    # df = load_sheet_data(service, complete_sheet_name)
+    service = google_service_api.get_service()
+    df = load_sheet_data(service, complete_sheet_name)
 
-    df = load_local_test('Complete')
+    # df = load_local_test('Complete')
     df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
+
+    df
+
     _geo_json = _create_geojson(df, ['Price'])
 
     return gj_dumps(_geo_json)

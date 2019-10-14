@@ -31,6 +31,7 @@ def hello():
 
     env = os.environ
     headers = request.headers
+    
     sk = request.json['secret_key']
     if sk != os.getenv("secret_key"):
         return "Hello world!"
