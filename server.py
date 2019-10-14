@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect
+from flask_cors import CORS
 import google_service_api
 from dotenv import load_dotenv
 load_dotenv()
@@ -6,8 +7,11 @@ load_dotenv()
 import os
 
 app = Flask(__name__)
+cors = CORS(app)
 
 import json
+
+
 import processing
 import mapping
 
@@ -60,6 +64,14 @@ def view_get_map():
     return render_template('map.html')
 
 
+@app.route('/mapData-All-{}'.format(os.getenv('spreadsheet_id')))
+def view_get_all_map_data():    
+    service = google_service_api.get_service()
+    df = processing.current_listings_json(service)
+    
+    return df
+  
+  
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect("/")
@@ -67,3 +79,4 @@ def page_not_found(e):
 
 if __name__ == "__main__":
     app.run()
+

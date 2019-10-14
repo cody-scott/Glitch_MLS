@@ -7,3 +7,4 @@ google-auth-oauthlib
 python-dotenv
 geojson
 xlrd
+flask-cors

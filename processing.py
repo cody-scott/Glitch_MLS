@@ -228,3 +228,8 @@ def process(service):
 
     logging.info("Saving Tables")
     save_to_sheets(active_df, full_df, service)
+
+    
+def current_listings_json(service):
+    df = load_old_data(service)
+    return df.to_csv()

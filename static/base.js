@@ -185,7 +185,7 @@ function load_data(data_source) {
                     // zoom is 5 (or less) -> circle radius will be 1px
                     7, 5,
                     // zoom is 10 (or greater) -> circle radius will be 5px
-                    12, 10
+                    12, 15
                 ],
             'circle-color':
                 [
@@ -211,7 +211,7 @@ function load_data(data_source) {
         }
     });
 
-    map.on('click', get_listing_price);
+    // map.on('click', get_listing_price);
 }
 
 // function start_work() {
@@ -245,7 +245,12 @@ var overlay = document.getElementById('map-overlay');
 var tmp_feat;
 function feature_overlay(e) {
     overlay.innerHTML = '';
-    var features = map.queryRenderedFeatures(e.point, { layers: ['listings-circles'] });
+    
+    var buff = 20;
+    var bbox = [[e.point.x - buff, e.point.y - buff], [e.point.x + buff, e.point.y + buff]];
+    var features = map.queryRenderedFeatures(bbox, { layers: ['listings-circles'] });
+  
+    // var features = map.queryRenderedFeatures(e.point, { layers: ['listings-circles'] });
     // console.log(features.length);
     if (features.length === 0) {
         overlay.style.display = 'none';
