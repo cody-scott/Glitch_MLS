@@ -6,3 +6,4 @@
 *.xlsx
 *.ipynb
 *.pyc
+*.ipynb_checkpoints

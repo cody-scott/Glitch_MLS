@@ -38,19 +38,19 @@ def update_dataframe(data_frame):
     data_frame['Latitude'] = data_frame['Latitude'].round(5)
     data_frame['Longitude'] = data_frame['Longitude'].round(5)
 
-    def rd(x, base=25000):
-        mx = int(base * round(float(x) / base))
+    # def rd(x, base=25000):
+    #     mx = int(base * round(float(x) / base))
 
-        return '{}-{}'.format((mx - base) + 1, mx)
+    #     return '{}-{}'.format((mx - base) + 1, mx)
+    # data_frame['Price Category'] = data_frame['Price'].apply(rd)
 
-    data_frame['Price Category'] = data_frame['Price'].apply(rd)
     data_frame['Address'] = data_frame['Address'].apply(lambda x: str(x))
     return data_frame
 
 
 def _create_geojson(data_frame, fld=None):
     if fld is None:
-        fld = ['Address', 'Price', 'Price Category', 'GoogleLink', 'URL']
+        fld = ['Id', 'Address', 'Price', 'GoogleLink', 'URL']
 
     geom_fld = ['Latitude', 'Longitude']
     sub_data = data_frame[fld + geom_fld]
@@ -80,13 +80,17 @@ def get_unique_lat_long():
     return gj_dumps(_geo_json)
 
 
-def get_mappings():
-    # service = google_service_api.get_service()
-    # df = load_sheet_data(service, active_sheet_name)
+def get_mappings(max_price=None):
+    if max_price is None:
+        max_price = 999999
 
-    df = load_local_test('Active')
+    service = google_service_api.get_service()
+    df = load_sheet_data(service, active_sheet_name)
+
+    # df = load_local_test('Active')
 
     df = update_dataframe(df)
+    df = df.loc[df['Price']<=max_price]
 
     _geo_json = _create_geojson(df)
 

@@ -1,23 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Map</title>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.3.2/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.3.2/mapbox-gl.css' rel='stylesheet' />
-    <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .map-overlay {
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+            border-radius: 3px;
+            position: absolute;
+            width: 45%;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
     <div id='map'></div>
+    <div id='map-overlay' class='map-overlay'></div>
+
+
     <script src="/static/cmap.js"></script>
     <script src="/static/base.js"></script>
 </body>
+
 </html>

@@ -101,10 +101,18 @@ def listings_to_dataframe(listings):
     return df
 
 
-def load_old_data(service):
+def load_old_data(service, _spreadsheet_id=None, _sheet_name=None):
+    if _spreadsheet_id is not None:
+        spreadsheet_id = _spreadsheet_id
+
+    if _sheet_name is not None:
+        sheet_name = _sheet_name
+    else:
+        sheet_name = complete_sheet_name
+
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                range=complete_sheet_name).execute()
+                                range=sheet_name).execute()
     values = result.get('values', [])
 
     df_old = pd.DataFrame(columns=values[0], data=values[1:])
