@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, redirect, jsonify, has_request_context
 from flask_cors import CORS
 import google_service_api
 from dotenv import load_dotenv
@@ -8,21 +8,43 @@ import os
 
 app = Flask(__name__)
 cors = CORS(app)
-# from server import app
 
-import json
+import datetime
+nw = datetime.datetime.now()
+log_file = os.path.join(".data/logs", "Log_{}{}{}".format(nw.year, nw.month, nw.day))
 
+import logging
+root = logging.getLogger()
+
+from logging import Formatter
+class RequestFormatter(Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            print(request.environ.get('HTTP_X_FORWARDED_FOR', "NOADDR"))
+            record.remote_addr = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+        else:
+            record.url = None
+            record.remote_addr = None
+
+        return super().format(record)
+
+formatter = RequestFormatter(
+    '[%(asctime)s]\t%(remote_addr)s requested %(url)s\t%(levelname)s\t%(module)s\t%(message)s'
+)
+
+from flask.logging import default_handler
+default_handler.setFormatter(formatter)
+root.addHandler(default_handler)
+root.setLevel(logging.INFO)
+
+f_handler = logging.FileHandler(log_file)
+f_handler.setFormatter(formatter)
+f_handler.setLevel(logging.INFO)
+root.addHandler(f_handler)
 
 import processing
 import mapping
-
-
-import logging
-import datetime
-nw = datetime.datetime.now()
-log_file = os.path.join(".data/logs", "Log_{}_{}_{}".format(nw.year, nw.month, nw.day))
-logging.basicConfig(level=logging.INFO, filename=log_file)
-
 
 def _valid_secret_key(method=None):
     sk = request.headers.get('secret_key')
@@ -63,6 +85,7 @@ def view_get_map_data():
 
 @app.route('/mapData-Collected-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_collected_map_data():
+    req = request
     mp = mapping.get_unique_lat_long()
     return mp
 
@@ -92,4 +115,3 @@ def page_not_found(e):
 
 if __name__ == "__main__":
     app.run()
-

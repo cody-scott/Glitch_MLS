@@ -9,11 +9,12 @@ import os
 spreadsheet_id = os.getenv('spreadsheet_id')
 complete_sheet_name = os.getenv('complete_sheet_name')
 active_sheet_name = os.getenv('active_sheet_name')
-import logging
+
+from flask import current_app
 
 def _is_local():
     if os.getenv("local") is not None:
-        logging.info("Is Local")
+        current_app.logger.info("Is Local")
         return True
     else:
         return False
@@ -76,7 +77,6 @@ def get_unique_lat_long():
         service = google_service_api.get_service()
         df = load_sheet_data(service, complete_sheet_name)
 
-    
     df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
 
@@ -90,6 +90,7 @@ def get_unique_lat_long():
 def get_mappings(max_price=None):
     if max_price is None:
         max_price = 999999
+    current_app.logger.info("Getting Max price: {}".format(max_price))
 
     if _is_local():
         df = load_local_test('Active')
