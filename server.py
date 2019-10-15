@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, jsonify
 from flask_cors import CORS
 import google_service_api
 from dotenv import load_dotenv
@@ -82,6 +82,7 @@ def view_get_all_map_data():
 def view_get_all_map_data_json():    
     service = google_service_api.get_service()
     df = processing.current_listings_csv(service, "JSON")
+    # return jsonify(df)
     return df
   
 @app.errorhandler(404)

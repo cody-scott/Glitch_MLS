@@ -233,7 +233,7 @@ def process(service):
 def current_listings_csv(service, _format=None):    
     df = load_old_data(service)
     if _format=="JSON":
-        return df.to_json()
+        return df.to_json(orient="records")
     else:
         return df.to_csv()
 
