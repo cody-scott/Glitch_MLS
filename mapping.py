@@ -69,10 +69,13 @@ def _create_geojson(data_frame, fld=None):
 
 
 def get_unique_lat_long():
-    service = google_service_api.get_service()
-    df = load_sheet_data(service, complete_sheet_name)
+    if os.getenv('local') is not None:
+        df = load_local_test('Complete')
+    else:
+        service = google_service_api.get_service()
+        df = load_sheet_data(service, complete_sheet_name)
 
-    # df = load_local_test('Complete')
+    
     df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
 
@@ -87,10 +90,11 @@ def get_mappings(max_price=None):
     if max_price is None:
         max_price = 999999
 
-    service = google_service_api.get_service()
-    df = load_sheet_data(service, active_sheet_name)
-
-    # df = load_local_test('Active')
+    if os.getenv("local") is not None:
+        df = load_local_test('Active')
+    else:
+        service = google_service_api.get_service()
+        df = load_sheet_data(service, active_sheet_name)
 
     df = update_dataframe(df)
     df = df.loc[df['Price']<=max_price]

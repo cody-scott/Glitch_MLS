@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__)
 cors = CORS(app)
+# from server import app
 
 import json
 
@@ -58,7 +59,6 @@ def view_get_collected_map_data():
     return mp
 
 
-
 @app.route('/map-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_map():
     return render_template('map.html')
@@ -77,6 +77,6 @@ def page_not_found(e):
     return redirect("/")
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
 
