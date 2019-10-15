@@ -11,7 +11,9 @@ cors = CORS(app)
 
 from _log import setup_logger
 setup_logger()
-app.logger.info("Starting New App")
+
+import logging
+logging.info("Starting app")
 
 import processing
 import mapping

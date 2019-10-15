@@ -1,5 +1,3 @@
-# Python3 Flask project
-
 Get a service account token and grant that account access to your sheet
 
 save the contents of the service token in a file 
