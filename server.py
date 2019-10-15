@@ -17,6 +17,13 @@ import processing
 import mapping
 
 
+import logging
+import datetime
+nw = datetime.datetime.now()
+log_file = os.path.join(".data/logs", "Log_{}_{}_{}".format(nw.year, nw.month, nw.day))
+logging.basicConfig(level=logging.INFO, filename=log_file)
+
+
 def _valid_secret_key(method=None):
     sk = request.headers.get('secret_key')
     if method == "POST":
@@ -64,7 +71,7 @@ def view_get_map():
     return render_template('map.html')
 
 
-@app.route('/mapData-All-{}'.format(os.getenv('spreadsheet_id')))
+@app.route('/mapData-CSV-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_all_map_data():    
     service = google_service_api.get_service()
     df = processing.current_listings_json(service)
@@ -77,6 +84,6 @@ def page_not_found(e):
     return redirect("/")
 
 
-# if __name__ == "__main__":
-#     app.run()
+if __name__ == "__main__":
+    app.run()
 

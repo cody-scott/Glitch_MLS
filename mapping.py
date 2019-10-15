@@ -9,7 +9,14 @@ import os
 spreadsheet_id = os.getenv('spreadsheet_id')
 complete_sheet_name = os.getenv('complete_sheet_name')
 active_sheet_name = os.getenv('active_sheet_name')
+import logging
 
+def _is_local():
+    if os.getenv("local") is not None:
+        logging.info("Is Local")
+        return True
+    else:
+        return False
 
 def load_local_test(sheet_name):
     df = pd.read_excel('MLS Listings.xlsx', sheet_name)
@@ -38,12 +45,6 @@ def update_dataframe(data_frame):
     data_frame['Latitude'] = data_frame['Latitude'].round(5)
     data_frame['Longitude'] = data_frame['Longitude'].round(5)
 
-    # def rd(x, base=25000):
-    #     mx = int(base * round(float(x) / base))
-
-    #     return '{}-{}'.format((mx - base) + 1, mx)
-    # data_frame['Price Category'] = data_frame['Price'].apply(rd)
-
     data_frame['Address'] = data_frame['Address'].apply(lambda x: str(x))
     return data_frame
 
@@ -69,7 +70,7 @@ def _create_geojson(data_frame, fld=None):
 
 
 def get_unique_lat_long():
-    if os.getenv('local') is not None:
+    if _is_local():
         df = load_local_test('Complete')
     else:
         service = google_service_api.get_service()
@@ -90,7 +91,7 @@ def get_mappings(max_price=None):
     if max_price is None:
         max_price = 999999
 
-    if os.getenv("local") is not None:
+    if _is_local():
         df = load_local_test('Active')
     else:
         service = google_service_api.get_service()
