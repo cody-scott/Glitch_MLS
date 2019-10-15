@@ -40,3 +40,8 @@ def setup_logger():
     f_handler.setFormatter(formatter)
     f_handler.setLevel(logging.INFO)
     root.addHandler(f_handler)
+    
+    # wklog = logging.getLogger('werkzeug')
+    # wklog.setLevel(logging.ERROR)
+
+    

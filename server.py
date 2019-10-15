@@ -10,7 +10,12 @@ app = Flask(__name__)
 cors = CORS(app)
 
 from _log import setup_logger
+import logging
 setup_logger()
+
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers = gunicorn_logger.handlers
+app.logger.setLevel(gunicorn_logger.level)
 
 import logging
 logging.info("Starting app")
