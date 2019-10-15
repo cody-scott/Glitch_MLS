@@ -233,3 +233,4 @@ def process(service):
 def current_listings_json(service):
     df = load_old_data(service)
     return df.to_csv()
+
