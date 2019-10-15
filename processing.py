@@ -230,6 +230,11 @@ def process(service):
     save_to_sheets(active_df, full_df, service)
 
     
-def current_listings_json(service):
+def current_listings_csv(service, _format=None):    
     df = load_old_data(service)
+    if _format=="JSON":
+        return df.to_json()
+    else:
+        return df.to_csv()
+
     return df.to_csv()

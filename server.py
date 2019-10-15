@@ -37,6 +37,7 @@ def _valid_secret_key(method=None):
 
 @app.route("/", methods=['POST', 'GET'])
 def hello():
+    req = request
     if request.method == 'GET':
         return "Hello world!"
     req = request
@@ -74,10 +75,14 @@ def view_get_map():
 @app.route('/mapData-CSV-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_all_map_data():    
     service = google_service_api.get_service()
-    df = processing.current_listings_json(service)
-    
+    df = processing.current_listings_csv(service)
     return df
   
+@app.route('/mapData-JSON-{}'.format(os.getenv('spreadsheet_id')))
+def view_get_all_map_data_json():    
+    service = google_service_api.get_service()
+    df = processing.current_listings_csv(service, "JSON")
+    return df
   
 @app.errorhandler(404)
 def page_not_found(e):
