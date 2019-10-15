@@ -10,7 +10,7 @@ spreadsheet_id = os.getenv('spreadsheet_id')
 complete_sheet_name = os.getenv('complete_sheet_name')
 active_sheet_name = os.getenv('active_sheet_name')
 
-from flask import current_app
+from flask import current_app, request
 
 def _is_local():
     if os.getenv("local") is not None:
@@ -90,7 +90,10 @@ def get_unique_lat_long():
 def get_mappings(max_price=None):
     if max_price is None:
         max_price = 999999
+    
+    r = request
     current_app.logger.info("Getting Max price: {}".format(max_price))
+    
 
     if _is_local():
         df = load_local_test('Active')

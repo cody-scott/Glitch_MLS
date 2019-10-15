@@ -7,5 +7,5 @@ service_account_file = '.data/api_credentials.json'
 def get_service():
     credentials = service_account.Credentials.from_service_account_file(
         service_account_file, scopes=scopes)
-    service = build('sheets', 'v4', credentials=credentials)
+    service = build('sheets', 'v4', credentials=credentials, cache_discovery=False)
     return service
