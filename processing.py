@@ -43,8 +43,8 @@ def get_listings(query_parameters):
     # print(response.content.decode("utf-8"))
     data = json.loads(response.content.decode("utf-8"))
     if response.status_code != 200:
-        print("ERROR in request")
-        print(data)
+        logging.error("ERROR in request")
+        logging.error(data)
 
     out_data = []
     out_data.extend(data['Results'])
@@ -57,8 +57,8 @@ def get_listings(query_parameters):
             response = request_data(query_parameters, current_page=i)
             data = json.loads(response.content.decode("utf-8"))
             if response.status_code != 200:
-                print("ERROR")
-                print(data)
+                logging.error("ERROR")
+                logging.error(data)
             out_data.extend(data['Results'])
     print(len(out_data))
     return out_data
