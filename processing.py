@@ -111,6 +111,7 @@ def listings_to_dataframe(listings):
             'URL': "https://www.realtor.ca{}".format(fh["RelativeDetailsURL"]),
             "CreateDate": datetime.datetime.now().strftime(
                 "%Y-%m-%d 00:00:00 AM"),
+            "Estimate": 0,
         })
         pandas_raw.append(var)
     df = pd.DataFrame(pandas_raw)
@@ -191,7 +192,7 @@ def save_to_sheet(_df, sheet_range, service):
     pass
 
 def clear_active_sheet(service):
-    range_ = active_sheet_name  # TODO: Update placeholder value.
+    range_ = active_sheet_name
 
     clear_values_request_body = {
     }
@@ -222,6 +223,8 @@ def process(service):
     logging.info("Loading old data")
     old_excel_list = load_old_data(service)
 
+    freehold_data_frame = calculate_estimate(freehold_data_frame, old_excel_list)
+
     logging.info("Updating Data")
     active_df, full_df = generate_new_frames(freehold_data_frame,
                                              old_excel_list)
@@ -229,6 +232,21 @@ def process(service):
     logging.info("Saving Tables")
     save_to_sheets(active_df, full_df, service)
 
+
+def calculate_estimate(freehold_data_frame, old_data_frame):
+    try:
+        c_nn = old_data_frame.loc[~old_data_frame["CreateDate"].isnull()]
+        o_c = c_nn[["Id", "Longitude", "Latitude", "Price"]].to_json(orient='records')
+
+        o_a = freehold_data_frame[["Id", "Longitude", "Latitude", "Price"]].to_json(orient='records')
+
+        r = requests.post("http://127.0.0.1:8000/", json={'complete': o_c, 'active': o_a})
+        _data = r.json()
+        freehold_data_frame["Estimate"] = freehold_data_frame["Id"].apply(lambda x: _data.get(str(x), 0))
+        return freehold_data_frame
+    except:
+        logging.error("Error getting estimates")
+        return freehold_data_frame
     
 def current_listings_csv(service, _format=None):    
     df = load_old_data(service)

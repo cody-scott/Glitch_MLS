@@ -1,0 +1,12 @@
+{
+    "name": "app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {},
+    "author": "",
+    "dependencies": {
+        "@turf/turf": ">1.x",
+        "express": ">0.x"
+    }
+}
