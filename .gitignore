@@ -10,3 +10,4 @@
 .vscode/*
 *.csv
 *.DS_STORE
+*/node_modules/*
