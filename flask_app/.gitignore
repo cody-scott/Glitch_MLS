@@ -7,8 +7,7 @@
 *.ipynb
 *.pyc
 *.ipynb_checkpoints
-node_app/node_modules/*
-__pycache__/*w
 .vscode/*
 *.csv
 *.DS_STORE
+node_app/node_modules/*

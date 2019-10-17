@@ -3,7 +3,9 @@
     "version": "1.0.0",
     "description": "None",
     "main": "app.js",
-    "scripts": {},
+    "scripts": {
+        "start": "bash sh/node_script.sh & bash sh/py_script.sh"
+    },
     "author": "Me",
     "dependencies": {
         "@turf/turf": ">1.x",
