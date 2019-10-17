@@ -1,3 +1,13 @@
+# Python and Nodejs
+
+Running both python (flask) and nodejs (express) in one app
+
+Python used for server and all processing work
+Nodejs is used for estimation of prices using turfjs
+
+
+## setup
+
 Get a service account token and grant that account access to your sheet
 
 save the contents of the service token in a file 

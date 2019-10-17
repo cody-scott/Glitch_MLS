@@ -1,4 +1,5 @@
 #!/bin/bash
 
-pip3 install -r flask_app/requirements.txt
-PYTHONUNBUFFERED=true gunicorn flask_app/server:app
+pwd
+pip3 install -r flask_app/requirements.txt --user
+PYTHONUNBUFFERED=true python3 flask_app/server.py

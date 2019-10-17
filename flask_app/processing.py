@@ -11,7 +11,7 @@ import logging
 
 base_url = 'https://api2.realtor.ca/Listing.svc/PropertySearch_Post'
 
-config_file = r'config.json'
+config_file = r'flask_app/config.json'
 
 spreadsheet_id = os.getenv('spreadsheet_id')
 complete_sheet_name = os.getenv('complete_sheet_name')
@@ -192,19 +192,20 @@ def save_to_sheet(_df, sheet_range, service):
     pass
 
 def clear_active_sheet(service):
+    logging.info("Clearing Sheet")
     range_ = active_sheet_name
 
     clear_values_request_body = {
     }
 
     request = service.spreadsheets().values().clear(
-        spreadsheetId=spreadsheet_id, range=range_,
+        spreadsheetId=spreadsheet_id, range='Active!A1:M1000',
         body=clear_values_request_body)
     response = request.execute()
 
 # endregion
 def process(service):
-    # clear_active_sheet(service)
+    clear_active_sheet(service)
 
     logging.info("Getting listings")
 
@@ -235,6 +236,7 @@ def process(service):
 
 def calculate_estimate(freehold_data_frame, old_data_frame):
     try:
+        logging.info("Requesting estimates")
         c_nn = old_data_frame.loc[~old_data_frame["CreateDate"].isnull()]
         o_c = c_nn[["Id", "Longitude", "Latitude", "Price"]].to_json(orient='records')
 
@@ -242,6 +244,7 @@ def calculate_estimate(freehold_data_frame, old_data_frame):
 
         r = requests.post("http://127.0.0.1:8000/", json={'complete': o_c, 'active': o_a})
         _data = r.json()
+        # logging.info(_data)
         freehold_data_frame["Estimate"] = freehold_data_frame["Id"].apply(lambda x: _data.get(str(x), 0))
         return freehold_data_frame
     except:

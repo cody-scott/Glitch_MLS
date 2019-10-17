@@ -2,13 +2,15 @@
     "name": "app",
     "version": "1.0.0",
     "description": "None",
-    "main": "app.js",
+    "main": "node_app/app.js",
     "scripts": {
-        "start": "bash sh/node_script.sh & bash sh/py_script.sh"
+      "start": "bash sh/node_script.sh & bash sh/py_script.sh"
     },
     "author": "Me",
     "dependencies": {
-        "@turf/turf": ">1.x",
-        "express": ">0.x"
+      "@turf/turf": ">1.x",
+      "express": ">0.x",
+      "package.json": "^2.0.1"
     }
-}
+  }
+  

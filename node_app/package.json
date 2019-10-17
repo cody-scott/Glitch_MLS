@@ -7,6 +7,7 @@
     "author": "Me",
     "dependencies": {
         "@turf/turf": ">1.x",
-        "express": ">0.x"
+        "express": ">0.x",
+        "package.json": "^2.0.1"
     }
 }

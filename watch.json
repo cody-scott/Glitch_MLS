@@ -1,12 +1,12 @@
 {
-    "watch": {
-      "ignore": ["\\.pyc$"],
-      "install": {
-        "include": ["^requirements\\.txt$"]
-      },
-      "restart": {
-        "include": ["\\.py$", "^start\\.sh", "\\.js$"]
-      },
-      "throttle": 1000
-    }
+  "watch": {
+    "ignore": ["\\.pyc$"],
+    "install": {
+      "include": ["^requirements\\.txt$"]
+    },
+    "restart": {
+      "include": ["\\.py$", "^sh\\.sh", "\\.js$", "\\.json"]
+    },
+    "throttle": 1000
   }
+}

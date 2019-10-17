@@ -1,4 +1,6 @@
 #!/bin/bash
 
 cd node_app
-pnpm package.json
+pwd
+pnpm install package.json
+node app.js
