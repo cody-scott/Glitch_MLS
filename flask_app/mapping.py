@@ -47,12 +47,14 @@ def update_dataframe(data_frame):
     data_frame['Longitude'] = data_frame['Longitude'].round(5)
 
     data_frame['Address'] = data_frame['Address'].apply(lambda x: str(x))
+    data_frame['Estimate'] = data_frame['Estimate'].fillna(0)
+
     return data_frame
 
 
 def _create_geojson(data_frame, fld=None):
     if fld is None:
-        fld = ['Id', 'Address', 'Price', 'GoogleLink', 'URL']
+        fld = ['Id', 'Address', 'Price', 'GoogleLink', 'URL', 'Estimate']
 
     geom_fld = ['Latitude', 'Longitude']
     sub_data = data_frame[fld + geom_fld]
@@ -76,13 +78,11 @@ def get_unique_lat_long():
     else:
         service = google_service_api.get_service()
         df = load_sheet_data(service, complete_sheet_name)
-    print(df.shape)
+    # print(df.shape)
     df = df.loc[~df["CreateDate"].isnull()]
-    print(df.shape)
+    # print(df.shape)
     df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
-
-    df
 
     _geo_json = _create_geojson(df, ['Price'])
 

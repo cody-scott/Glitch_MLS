@@ -82,83 +82,13 @@ function get_map_click(e) {
     return feat;
 }
 
-function load_heatmap_geojson(data_source) {
+function load_tin_geojson(data_source) {
     $.getJSON(data_source, function (data) {
         unique_geojson = data;
         calculate_tin_map(data);
-        // load_heatmap(data);
     });
 }
 
-function load_heatmap(data_source) {
-    map.addSource('listings-unique',
-        {
-            'type': 'geojson',
-            'data': data_source
-        }
-    )
-
-    var mx_zoom = 15
-    map.addLayer({
-        "id": "listings-heat",
-        "type": "heatmap",
-        "source": "listings-unique",
-        // "maxzoom": 16,
-        "paint": {
-            // Increase the heatmap weight based on frequency and property magnitude
-            "heatmap-weight": [
-                "interpolate",
-                ["linear"],
-                ["get", "Price"],
-                300000, 0,
-                400000, 1,
-                500000, 6
-            ],
-            // Increase the heatmap color weight weight by zoom level
-            // heatmap-intensity is a multiplier on top of heatmap-weight
-            "heatmap-intensity": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                0, 0,
-                12, 0.5
-            ],
-            // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-            // Begin color ramp at 0-stop with a 0-transparancy color
-            // to create a blur-like effect.
-            "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0, 'rgba(0, 104, 55, 0)',
-                0.25, 'rgba(134, 203, 102, 1)',
-                0.5, 'rgba(254, 254, 189, 1)',
-                0.75, 'rgba(248, 139, 81, 1)',
-                1, 'rgba(165, 0, 38, 1)'
-            ],
-            // Adjust the heatmap radius by zoom level
-            "heatmap-radius": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                6, 0,
-                11, 20,
-                14, 60,
-                // 16, 100
-            ],
-            // Transition from heatmap to circle layer by zoom level
-            "heatmap-opacity": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                8, 0,
-                9, 0.5,
-                13, 0.5,
-                16, 0,
-            ],
-        }
-    });
-}
 
 function load_data_geojson(data_source) {
     $.getJSON(data_source, function (data) {
@@ -183,9 +113,9 @@ function load_data(data_source) {
                 [
                     "interpolate", ["linear"], ['zoom'],
                     // zoom is 5 (or less) -> circle radius will be 1px
-                    7, 5,
+                    10, 2,
                     // zoom is 10 (or greater) -> circle radius will be 5px
-                    12, 15
+                    12, 12
                 ],
             'circle-color':
                 [
@@ -198,7 +128,6 @@ function load_data(data_source) {
                     450000, 'rgba(248, 139, 81, 1)',
                     500000, 'rgba(0, 0, 0, 0)'
                 ],
-            // 'circle-opacity': 0.8,
             "circle-opacity": [
                 "interpolate",
                 ["linear"],
@@ -206,7 +135,7 @@ function load_data(data_source) {
                 9, 0,
                 10, 1
             ],
-            'circle-blur': 0.5,
+            'circle-blur': 0.2,
             'circle-stroke-color': [
                 'interpolate',
                 ['linear'],
@@ -218,13 +147,8 @@ function load_data(data_source) {
         }
     });
 
-    // map.on('click', get_listing_price);
 }
 
-// function start_work() {
-//     get_sheet_name();
-//     load_map();
-// }
 
 function load_map() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiamNvZHlzY290dCIsImEiOiJjaWk3c29xeGgwMjlvdHptMDdldDljamo5In0.h3XDeqo9J3oyLvEiJ4DAPQ';
@@ -237,14 +161,10 @@ function load_map() {
     });
 
     map.on('load', function () {
-        // load_heatmap(base_url + "/" + 'mapData-Collected-' + sheet_name);
-        load_heatmap_geojson(base_url + "/" + 'mapData-Collected-' + sheet_name);
+        load_tin_geojson(base_url + "/" + 'mapData-Collected-' + sheet_name);
         load_data_geojson(base_url + "/" + 'mapData-' + sheet_name);
     });
 
-    // map.on('zoomend', function () {
-    //     console.log(map.getZoom());
-    // })
 }
 
 var overlay = document.getElementById('map-overlay');
@@ -257,8 +177,6 @@ function feature_overlay(e) {
     var bbox = [[e.point.x - buff, e.point.y - buff], [e.point.x + buff, e.point.y + buff]];
     var features = map.queryRenderedFeatures(bbox, { layers: ['listings-circles'] });
   
-    // var features = map.queryRenderedFeatures(e.point, { layers: ['listings-circles'] });
-    // console.log(features.length);
     if (features.length === 0) {
         overlay.style.display = 'none';
         return
@@ -286,7 +204,6 @@ function feature_overlay(e) {
         f = arr[f]
         var _content = document.createElement('div');
         _content.textContent += f.join(": ");
-        // _content.textContent += "<br>";
         overlay.appendChild(_content);
     }
 
@@ -300,8 +217,6 @@ function feature_overlay(e) {
 
     overlay.style.display = 'block';
 }
-
-
 
 $(document).ready(function () {
     get_sheet_name();
