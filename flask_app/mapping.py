@@ -76,7 +76,9 @@ def get_unique_lat_long():
     else:
         service = google_service_api.get_service()
         df = load_sheet_data(service, complete_sheet_name)
-
+    print(df.shape)
+    df = df.loc[~df["CreateDate"].isnull()]
+    print(df.shape)
     df = df.round(5)
     df = df.groupby(['Latitude', "Longitude"]).agg({'Price': 'min'}).reset_index()
 

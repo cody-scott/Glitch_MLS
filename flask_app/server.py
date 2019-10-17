@@ -57,7 +57,7 @@ def hello():
 @app.route('/mapData-{}'.format(os.getenv('spreadsheet_id')))
 def view_get_map_data():
     r = request
-    mp = mapping.get_mappings(450000)
+    mp = mapping.get_mappings()
     return mp
 
 

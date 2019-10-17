@@ -27,7 +27,7 @@ function get_sheet_name() {
 function calculate_tin_map(data) {
     console.log("Loading Tin");
     var options = { gridType: 'points', property: 'Price', units: 'kilometers' };
-    var grid = turf.interpolate(unique_geojson, 0.5, options);
+    var grid = turf.interpolate(unique_geojson, 2, options);
     tin_grid = turf.tin(grid, 'Price')
     tin_grid = turf.rewind(tin_grid)
     console.log('Tin Generated');
@@ -196,7 +196,7 @@ function load_data(data_source) {
                     350000, 'rgba(134, 203, 102, 1)',
                     400000, 'rgba(254, 254, 189, 1)',
                     450000, 'rgba(248, 139, 81, 1)',
-                    500000, 'rgba(165, 0, 38, 1)'
+                    500000, 'rgba(0, 0, 0, 0)'
                 ],
             // 'circle-opacity': 0.8,
             "circle-opacity": [
@@ -206,8 +206,15 @@ function load_data(data_source) {
                 9, 0,
                 10, 1
             ],
-            'circle-blur': 0.5
-
+            'circle-blur': 0.5,
+            'circle-stroke-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'Price'],
+                499999, 'rgba(0, 0, 0, 0)',
+                500000, 'rgba(165, 0, 38, 1)'
+            ],
+            "circle-stroke-width": 1
         }
     });
 
